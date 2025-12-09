@@ -1,20 +1,12 @@
-// Declaración global de los sintetizadores
-let polySynth; 
-let noiseSynth;
-
-// Inicialización de Tone.js - Ejecutar inmediatamente después de la carga del script de Tone.js
-if (typeof Tone !== 'undefined') {
-     try {
-        // Inicializa los sintetizadores de Tone.js
-        polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
-        noiseSynth = new Tone.NoiseSynth().toDestination();
-     } catch (e) {
-        console.error("Error al inicializar sintetizadores de Tone.js:", e);
-        polySynth = undefined; // Forzar el estado de fallo si algo sale mal
-     }
-} else {
-     console.error("Error: Tone.js no está definido. Verifique la carga del script.");
-}
+// Elementos del DOM declarados para tener un alcance global
+let digimonImage;
+let digimonName;
+let digimonStage;
+let evolveButton;
+let digimonDisplay;
+let statusMessage;
+let progressBar;
+let progressContainer;
 
 // Datos de las etapas de evolución del Digimon
 const evolutions = [
@@ -29,16 +21,6 @@ const evolutions = [
 let currentStageIndex = 0;
 let isEvolving = false;
 const baseDisplayClasses = "relative flex flex-col items-center justify-center p-8 rounded-xl mb-8 transition-all duration-700";
-
-// Elementos del DOM
-const digimonImage = document.getElementById('digimon-image');
-const digimonName = document.getElementById('digimon-name');
-const digimonStage = document.getElementById('digimon-stage');
-const evolveButton = document.getElementById('evolve-button');
-const digimonDisplay = document.getElementById('digimon-display');
-const statusMessage = document.getElementById('status-message');
-const progressBar = document.getElementById('progress-bar');
-const progressContainer = document.getElementById('progress-container');
 
 /**
  * Actualiza la interfaz con los datos del Digimon de la etapa actual.
@@ -96,18 +78,6 @@ function startProgressBar(durationMs) {
  */
 async function attemptEvolution() {
     
-    // Si los synths no se inicializaron correctamente, salimos
-    if (!polySynth) {
-        statusMessage.textContent = "Error: Funcionalidad de audio deshabilitada. Recargue la página.";
-        return;
-    }
-    
-    // Asegurarse de que el audio esté activado antes de empezar
-    if (Tone.context.state !== 'running') {
-        await Tone.start();
-    }
-
-
     if (isEvolving) return;
 
     if (currentStageIndex >= evolutions.length - 1) {
@@ -120,42 +90,34 @@ async function attemptEvolution() {
     evolveButton.disabled = true;
     statusMessage.textContent = "¡Comenzando la Digievolución! ¡Abre la puerta digital!";
     
-    // 1. Efecto de Carga (Sonido y Barra)
-    polySynth.triggerAttackRelease(["C3", "G3"], "4n"); // Sonido de inicio
-    noiseSynth.triggerAttackRelease("4n"); // Sonido de ruido digital
-    
     const evolutionDuration = 3000; // 3 segundos para la animación completa
     startProgressBar(evolutionDuration);
 
-    // 2. Destello (Flash) y Giro
+    // 1. Destello (Flash) y Giro
     digimonDisplay.classList.add('evolution-flash');
     digimonImage.classList.remove('evolution-enter-active'); 
     
     // Pausa media para la carga
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // 3. Ocultar el Digimon actual y sonido de pico
+    // 2. Ocultar el Digimon actual
     digimonImage.classList.add('evolution-enter');
-    polySynth.triggerAttackRelease("C6", "8n"); // Sonido agudo de pico
     statusMessage.textContent = "....DIGIVOLVING ENERGÍA AL MÁXIMO....";
 
     // Pausa corta para que el Digimon desaparezca
     await new Promise(resolve => setTimeout(resolve, 500)); 
 
-    // 4. Actualizar los datos al siguiente Digimon
+    // 3. Actualizar los datos al siguiente Digimon
     currentStageIndex += 1;
     updateDigimonDisplay(currentStageIndex);
     
-    // 5. Mostrar el nuevo Digimon con animación de entrada
+    // 4. Mostrar el nuevo Digimon con animación de entrada
     digimonImage.classList.remove('evolution-enter');
     void digimonImage.offsetWidth; // Forzar reflow/repaint para la transición
     digimonImage.classList.add('evolution-enter-active');
 
-    // 6. Fin de la Animación y sonido de éxito
+    // 5. Fin de la Animación
     digimonDisplay.classList.remove('evolution-flash');
-    
-    // Sonido de Evolución Exitosa (Acorde majestuoso)
-    polySynth.triggerAttackRelease(["C5", "E5", "G5"], "2n"); 
 
     statusMessage.textContent = `¡Felicidades! Evolucionó a ${evolutions[currentStageIndex].name}. ¡A luchar!`;
     
@@ -166,19 +128,25 @@ async function attemptEvolution() {
     // Desactivar si se alcanzó la etapa final
     if (currentStageIndex === evolutions.length - 1) {
         evolveButton.disabled = true;
-        polySynth.triggerAttackRelease(["C6", "G6"], "1n"); // Sonido final de victoria
     }
 }
 
-// Inicializa la pantalla al cargar (solo actualizaciones del DOM y estado)
+// Inicializa la pantalla al cargar (obtiene el DOM y actualiza el estado)
 window.onload = () => {
-    if (!polySynth) {
-         statusMessage.textContent = "Error: El componente de audio (Tone.js) no cargó. El botón de evolución está desactivado.";
-         evolveButton.disabled = true;
-    } else {
-         statusMessage.textContent = "Haz click en 'DIGIEVOLUCIONAR' para iniciar la secuencia y habilitar el audio.";
-         evolveButton.disabled = false;
-    }
+    // Obtener todos los elementos del DOM (asegurando su existencia)
+    digimonImage = document.getElementById('digimon-image');
+    digimonName = document.getElementById('digimon-name');
+    digimonStage = document.getElementById('digimon-stage');
+    evolveButton = document.getElementById('evolve-button');
+    digimonDisplay = document.getElementById('digimon-display');
+    statusMessage = document.getElementById('status-message');
+    progressBar = document.getElementById('progress-bar');
+    progressContainer = document.getElementById('progress-container');
+    
+    // Mensaje inicial
+    statusMessage.textContent = "El simulador de evolución está listo para la acción.";
+    evolveButton.disabled = false;
 
+    // Actualizar la interfaz inicial
     updateDigimonDisplay(currentStageIndex);
 };
