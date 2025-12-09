@@ -48,6 +48,7 @@ function updateDigimonDisplay(index) {
 
 /**
  * Simula la barra de progreso.
+ * @param {number} durationMs - Duración total de la evolución en milisegundos.
  */
 function startProgressBar(durationMs) {
     progressContainer.classList.remove('hidden');
