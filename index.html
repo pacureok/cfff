@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolución Digimon Interactiva</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la hoja de estilos personalizada -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="evolution-card" class="bg-gray-900 text-white p-8 rounded-2xl shadow-2xl w-full max-w-xl text-center transition-all duration-700 ring-4 ring-indigo-500/50 border border-indigo-700">
+        <h1 class="text-5xl font-black mb-8 text-indigo-400 title-glow tracking-wide">
+            SIMULADOR DIGIVICE V2.0
+        </h1>
+        
+        <!-- Contenedor del Digimon -->
+        <div id="digimon-display" class="relative flex flex-col items-center justify-center p-8 rounded-xl mb-8 transition-all duration-700 bg-gray-700 ring-4 ring-indigo-500">
+            
+            <!-- Imagen del Digimon -->
+            <img id="digimon-image" 
+                 src="https://placehold.co/180x180/6366f1/white?text=Botamon" 
+                 alt="Digimon" 
+                 class="w-44 h-44 object-cover rounded-full mb-4 border-4 border-indigo-300 transition-all duration-1000 shadow-xl shadow-indigo-500/30 evolution-enter-active">
+            
+            <!-- Nombre y Etapa -->
+            <p class="text-lg font-semibold text-gray-300 uppercase tracking-widest">
+                Etapa: <span id="digimon-stage" class="text-indigo-400 font-extrabold">Bebé I</span>
+            </p>
+            <h2 id="digimon-name" class="text-5xl font-black transition-all duration-500 mt-1 text-indigo-100">Botamon 🥚</h2>
+        </div>
+
+        <!-- Barra de Progreso de Evolución -->
+        <div id="progress-container" class="mb-6 h-6 bg-gray-800 rounded-full overflow-hidden border border-indigo-500 hidden">
+            <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-300 ease-linear" style="width: 0%;"></div>
+        </div>
+
+        <!-- Botón de Evolución -->
+        <button id="evolve-button" 
+                class="w-full bg-indigo-500 hover:bg-indigo-400 text-white font-extrabold py-4 px-6 rounded-lg text-2xl shadow-2xl shadow-indigo-600/50 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+                onclick="attemptEvolution()">
+            ¡INICIAR DIGIEVOLUCIÓN!
+        </button>
+
+        <!-- Mensaje de Estado -->
+        <p id="status-message" class="mt-6 text-xl font-medium h-7 transition-colors duration-500 text-green-400"></p>
+    </div>
+    
+    <!-- Carga de Tone.js para efectos de sonido (Obligatorio para Web Audio) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.52/Tone.js"></script>
+    <!-- Carga del script de lógica -->
+    <script src="script.js"></script>
+</body>
+</html>
